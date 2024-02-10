@@ -1,9 +1,13 @@
-import Image from "next/image";
+'use client';
+import MyApp from './MyApp';
+import AuthContextProvider from './context/AuthContextProvider';
 
-export default function Home() {
+function App() {
   return (
-    <div style={{ textAlign: "center", fontSize: "3rem", fontWeight: "bold", margin: "5rem" }}>
-      <h1 className="">Welcome to TekClinic&apos;s temporary website</h1>
-    </div>
-  );
+    <AuthContextProvider>
+      <MyApp />
+    </AuthContextProvider>
+  )
 }
+
+export default App;
