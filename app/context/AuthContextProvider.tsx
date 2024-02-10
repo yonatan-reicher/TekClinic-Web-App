@@ -1,13 +1,13 @@
 import Keycloak, { KeycloakConfig, KeycloakInitOptions } from "keycloak-js";
 import { createContext, useEffect, useState } from "react";
-
+import axios, { isCancel, AxiosError } from 'axios';
 /**
  * KeycloakConfig configures the connection to the Keycloak server.
  */
-const keycloakConfig: KeycloakConfig = {
-  realm: "TekClinic-Example",
-  clientId: "webapp",
-  url: "http://localhost:8180/auth",
+const keycloakConfig: KeycloakConfig = { 
+  realm: "tekclinic", 
+  clientId: "web-app", 
+  url: "http://auth.tekclinic.org/", 
 };
 
 const keycloakInitOptions: KeycloakInitOptions = {
@@ -16,7 +16,7 @@ const keycloakInitOptions: KeycloakInitOptions = {
   checkLoginIframe: false
 };
 
-let keycloak: Keycloak.KeycloakInstance;
+let keycloak: Keycloak;
 /**
  * AuthContextValues defines the structure for the default values of the {@link AuthContext}.
  */
@@ -82,7 +82,6 @@ const AuthContextProvider = (props: AuthContextProviderProps) => {
         const isAuthenticatedResponse = await keycloak.init(
           keycloakInitOptions
         );
-
         if (!isAuthenticatedResponse) {
           console.log(
             "user is not yet authenticated. forwarding user to login."
@@ -98,8 +97,7 @@ const AuthContextProvider = (props: AuthContextProviderProps) => {
     }
 
     if (typeof window !== 'undefined') {
-      const Keycloak = require('keycloak-js');
-      keycloak = Keycloak(keycloakConfig);
+      keycloak = new Keycloak(keycloakConfig);
       // Initialize Keycloak here...
       initializeKeycloak();
     }
@@ -138,7 +136,7 @@ const AuthContextProvider = (props: AuthContextProviderProps) => {
   const hasRole = (role: string) => {
     return keycloak.hasRealmRole(role);
   };
-  
+
   return (
     // Creating the provider and passing the state into it. Whenever the state changes the components using this context will be re-rendered.
     <AuthContext.Provider value={{ isAuthenticated, logout, username, hasRole }}>
