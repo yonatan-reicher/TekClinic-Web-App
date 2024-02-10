@@ -1,4 +1,4 @@
-import { KeycloakConfig, KeycloakInitOptions } from "keycloak-js";
+import Keycloak, { KeycloakConfig, KeycloakInitOptions } from "keycloak-js";
 import { createContext, useEffect, useState } from "react";
 
 /**
@@ -16,7 +16,7 @@ const keycloakInitOptions: KeycloakInitOptions = {
   checkLoginIframe: false
 };
 
-let keycloak;
+let keycloak: Keycloak.KeycloakInstance;
 /**
  * AuthContextValues defines the structure for the default values of the {@link AuthContext}.
  */
@@ -29,11 +29,21 @@ interface AuthContextValues {
    * Function to initiate the logout
    */
   logout: () => void;
+  /**
+   * The name of the authenticated user
+   */
+  username: string;
+  /**
+  * Check if the user has the given role
+  */
+  hasRole: (role: string) => boolean;
 }
 //...This is outside of AuthContextProvider
 const defaultAuthContextValues: AuthContextValues = {
   isAuthenticated: false,
-  logout: () => {},
+  logout: () => { },
+  username: "",
+  hasRole: (role) => false,
 };
 
 /**
@@ -72,7 +82,7 @@ const AuthContextProvider = (props: AuthContextProviderProps) => {
         const isAuthenticatedResponse = await keycloak.init(
           keycloakInitOptions
         );
-  
+
         if (!isAuthenticatedResponse) {
           console.log(
             "user is not yet authenticated. forwarding user to login."
@@ -100,9 +110,38 @@ const AuthContextProvider = (props: AuthContextProviderProps) => {
     keycloak.logout();
   };
 
+  const [username, setUsername] = useState<string>("");
+
+  useEffect(() => {
+    /**
+     * Load the profile for of the user from Keycloak
+     */
+    async function loadProfile() {
+      try {
+        const profile = await keycloak.loadUserProfile();
+        if (profile.firstName) {
+          setUsername(profile.firstName);
+        } else if (profile.username) {
+          setUsername(profile.username);
+        }
+      } catch {
+        console.log("error trying to load the user profile");
+      }
+    }
+
+    // Only load the profile if a user is authenticated
+    if (isAuthenticated) {
+      loadProfile();
+    }
+  }, [isAuthenticated])
+
+  const hasRole = (role: string) => {
+    return keycloak.hasRealmRole(role);
+  };
+  
   return (
     // Creating the provider and passing the state into it. Whenever the state changes the components using this context will be re-rendered.
-    <AuthContext.Provider value={{ isAuthenticated, logout }}>
+    <AuthContext.Provider value={{ isAuthenticated, logout, username, hasRole }}>
       {props.children}
     </AuthContext.Provider>
   );
