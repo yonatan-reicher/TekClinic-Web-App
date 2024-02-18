@@ -7,6 +7,7 @@ import axios, { isCancel, AxiosError } from 'axios';
 const keycloakConfig: KeycloakConfig = { 
   realm: "tekclinic", 
   clientId: "web-app", 
+  //url: "http://localhost:8180/auth"
   url: "http://auth.tekclinic.org/", 
 };
 
@@ -37,13 +38,19 @@ interface AuthContextValues {
   * Check if the user has the given role
   */
   hasRole: (role: string) => boolean;
+
+  /**
+   * Keycloak token for user Authentication
+   */
+  keycloakToken: string | undefined;
 }
-//...This is outside of AuthContextProvider
+
 const defaultAuthContextValues: AuthContextValues = {
   isAuthenticated: false,
   logout: () => { },
   username: "",
   hasRole: (role) => false,
+  keycloakToken: ""
 };
 
 /**
@@ -72,8 +79,9 @@ const AuthContextProvider = (props: AuthContextProviderProps) => {
   // This is just here to check that we setup the provider correctly.
   console.log("rendering AuthContextProvider");
 
-  // Creating the local state to keep track of the authentication
+  // Creating the local state to keep track of the authentication & the token
   const [isAuthenticated, setAuthenticated] = useState<boolean>(false);
+  const [keycloakToken, setToken] = useState<string | undefined>("");
 
   useEffect(() => {
     async function initializeKeycloak() {
@@ -90,6 +98,8 @@ const AuthContextProvider = (props: AuthContextProviderProps) => {
         }
         console.log("user already authenticated");
         setAuthenticated(isAuthenticatedResponse);
+        // Updating token state
+        setToken(keycloak.token);
       } catch {
         console.log("error initializing Keycloak");
         setAuthenticated(false);
@@ -139,7 +149,7 @@ const AuthContextProvider = (props: AuthContextProviderProps) => {
 
   return (
     // Creating the provider and passing the state into it. Whenever the state changes the components using this context will be re-rendered.
-    <AuthContext.Provider value={{ isAuthenticated, logout, username, hasRole }}>
+    <AuthContext.Provider value={{ isAuthenticated, logout, username, hasRole, keycloakToken}}>
       {props.children}
     </AuthContext.Provider>
   );
