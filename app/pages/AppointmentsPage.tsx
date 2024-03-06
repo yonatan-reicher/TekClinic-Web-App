@@ -3,6 +3,8 @@ import { AuthContext } from "../context/AuthContextProvider";
 import { useEffect, useState } from "react";
 import {  AppointmentResponse, EndpointResponse, fetchEndpointResponse, fetchAppointmentList  } from "../apiCalls";
 import AppointmentTable from '../components/AppointmentTable';
+import styles from './general.module.css'; // Import CSS module for styling
+
 
 const AppointmentsPage = () => {
   const authContext = useContext(AuthContext);
@@ -47,10 +49,9 @@ const AppointmentsPage = () => {
     fetchEndpointData();
   }, [authContext.isAuthenticated, authContext.keycloakToken, authContext.username]);
   return (
-    <div>
-      <h1>Appointments</h1>
+    <div className={styles.container}>
+      <h1 className={styles.heading}>Appointments</h1>
       <AppointmentTable appointmentList={appointmentList} />
-      {/* Add content specific to appointments page */}
     </div>
   );
 };

@@ -3,6 +3,8 @@ import { AuthContext } from "../context/AuthContextProvider";
 import { useEffect, useState } from "react";
 import { PatientResponse, EndpointResponse, fetchEndpointResponse, fetchPatientList } from "../apiCalls";
 import PatientTable from '../components/PatientTable';
+import styles from './general.module.css'; // Import CSS module for styling
+
 
 const PatientsPage = () => {
   const authContext = useContext(AuthContext);
@@ -47,7 +49,7 @@ const PatientsPage = () => {
     fetchEndpointData();
   }, [authContext.isAuthenticated, authContext.keycloakToken, authContext.username]);
   return (
-    <div>
+    <div className={styles.container}>
       <h1>Patients</h1>
       <PatientTable patientList={patientList} />
       {/* Add content specific to patients page */}

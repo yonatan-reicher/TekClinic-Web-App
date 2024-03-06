@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom'; // Import Link from react-router-dom
+import { Link } from 'react-router-dom';
 import classes from './NavBar.module.css';
 
 interface NavbarLinkProps {
-  to: string; // Add 'to' prop to specify the route
+  to: string;
   label: string;
 }
 
@@ -21,7 +21,7 @@ export function Navbar() {
   const links = [
     { to: '/', label: 'Home' },
     { to: '/patients', label: 'Patients' },
-    { to: '/volunteers-doctors', label: 'Doctors and Volunteers' },
+    { to: '/volunteers-doctors', label: 'Volunteers' },
     { to: '/appointments', label: 'Appointments' },
   ];
 

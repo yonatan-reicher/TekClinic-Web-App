@@ -6,6 +6,10 @@ import { PatientResponse, DoctorResponse, AppointmentResponse, EndpointResponse,
 import PatientTable from '../components/PatientTable';
 import DoctorTable from '../components/DoctorTable';
 import AppointmentTable from '../components/AppointmentTable';
+import styles from './general.module.css'; // Import CSS module for styling
+import Image from 'next/image';
+
+
 
 export default function Home() {
   const authContext = useContext(AuthContext);
@@ -53,9 +57,12 @@ export default function Home() {
   }, [authContext.isAuthenticated, authContext.keycloakToken, authContext.username]);
 
   return (
-    <div>
+    <div className={styles.container}>
+      <center>
       <Title>Hello, {username}</Title>
+      <br />
       <Button onClick={authContext.logout}>Logout</Button>
+      </center>
     </div>
   );
 }
