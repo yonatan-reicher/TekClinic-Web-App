@@ -1,0 +1,35 @@
+.navbar {
+  width: 200px;
+  height: 100vh; /* Use full viewport height */
+  padding: 16px; /* Adjust padding */
+  display: flex;
+  flex-direction: column;
+  background-color: #007bff; /* Change to blue color */
+}
+
+.navbarMain {
+  flex: 1;
+  margin-top: 20px; /* Adjust margin */
+}
+
+.link {
+  width: 180px;
+  height: 50px;
+  border-radius: 50%; /* Make it circular */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  text-decoration: none; /* Remove default link decoration */
+  transition: background-color 0.3s ease; /* Add smooth transition */
+}
+
+.link:hover {
+  background-color: #0056b3; /* Darken background color on hover */
+}
+
+.link[data-active] {
+  background-color: #fff; /* Change background color when active */
+  color: #007bff; /* Change text color when active */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); /* Add shadow when active */
+}

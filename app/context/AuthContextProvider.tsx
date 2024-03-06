@@ -7,8 +7,8 @@ import axios, { isCancel, AxiosError } from 'axios';
 const keycloakConfig: KeycloakConfig = { 
   realm: "tekclinic", 
   clientId: "web-app", 
-  //url: "http://localhost:8180/auth"
-  url: "http://auth.tekclinic.org/", 
+  url: "http://localhost:8180/auth"
+  //url: "http://auth.tekclinic.org/", 
 };
 
 const keycloakInitOptions: KeycloakInitOptions = {
@@ -21,7 +21,7 @@ let keycloak: Keycloak;
 /**
  * AuthContextValues defines the structure for the default values of the {@link AuthContext}.
  */
-interface AuthContextValues {
+export interface AuthContextValues {
   /**
    * Whether or not a user is currently authenticated
    */
