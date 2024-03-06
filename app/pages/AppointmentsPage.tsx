@@ -49,7 +49,7 @@ const AppointmentsPage = () => {
     fetchEndpointData();
   }, [authContext.isAuthenticated, authContext.keycloakToken, authContext.username]);
   return (
-    <div className={styles.container}>
+    <div className={styles.container} style={{ height: '100%', overflow: 'auto' }}>
       <h1 className={styles.heading}>Appointments</h1>
       <AppointmentTable appointmentList={appointmentList} />
     </div>

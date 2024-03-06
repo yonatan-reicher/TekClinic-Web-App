@@ -68,7 +68,8 @@ export interface AppointmentResponse {
 export function fetchEndpointResponse(endpoint: string, limit: number, offset: number, authContext: AuthContextValues, setError: React.Dispatch<React.SetStateAction<string | null>>): Promise<EndpointResponse> {
     return new Promise((resolve, reject) => {
         if (authContext.isAuthenticated && authContext.keycloakToken) {
-            axios.get<EndpointResponse>(`${url}/${endpoint}?limit=${limit}&offset=${offset}`, {
+            let get_url = `${url}/${endpoint}?limit=${limit}&offset=${offset}`;
+            axios.get<EndpointResponse>(get_url, {
                 headers: {
                     Authorization: `Bearer ${authContext.keycloakToken}`,
                 },

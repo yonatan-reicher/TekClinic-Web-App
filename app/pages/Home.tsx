@@ -3,7 +3,6 @@ import { Title, Button } from '@mantine/core';
 import { AuthContext } from "../context/AuthContextProvider";
 import { useEffect, useState } from "react";
 import { PatientResponse, DoctorResponse, AppointmentResponse, EndpointResponse, fetchEndpointResponse, fetchPatientList, fetchDoctorList, fetchAppointmentList } from "../apiCalls";
-import PatientTable from '../components/PatientTable';
 import DoctorTable from '../components/DoctorTable';
 import AppointmentTable from '../components/AppointmentTable';
 import styles from './general.module.css'; // Import CSS module for styling
@@ -34,26 +33,6 @@ export default function Home() {
     if (authContext.isAuthenticated && authContext.keycloakToken && authContext.username) {
       setUsername(authContext.username);
     }
-    const fetchEndpointData = async () => {
-      try {
-        const patientEndpointData = await fetchEndpointResponse("patient", limit, offset, authContext, setError);
-        console.log(patientEndpointData);
-        setPatientEndpointResponse(patientEndpointData);
-        
-        const doctorEndpointData = await fetchEndpointResponse("doctor", limit, offset, authContext, setError);
-        console.log(doctorEndpointData);
-        setDoctorEndpointResponse(doctorEndpointData);
-        
-        const appointmentEndpointData = await fetchEndpointResponse("appointment", limit, offset, authContext, setError);
-        console.log(appointmentEndpointData);
-        setAppointmentEndpointResponse(appointmentEndpointData);
-      } catch (error) {
-        console.error('Error occurred:', error);
-        console.error('Logging out...', error);
-        authContext.logout();
-      }
-    };
-    fetchEndpointData();
   }, [authContext.isAuthenticated, authContext.keycloakToken, authContext.username]);
 
   return (
