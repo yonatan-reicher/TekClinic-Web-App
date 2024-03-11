@@ -1,10 +1,8 @@
-/** 
- * 1. Maybe add type checking? 
-*/
 import { AuthContextValues } from "./context/AuthContextProvider"; //I changed AuthContextValues interface to make it exportable
 import axios, { AxiosResponse, AxiosError } from 'axios';
 
-const url = 'http://localhost:8080';
+//const url = 'http://localhost:8080';
+const url = 'http://api.tekclinic.org';
 
 interface Results {
     name: string;
