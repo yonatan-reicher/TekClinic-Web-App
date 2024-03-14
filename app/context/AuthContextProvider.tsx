@@ -21,7 +21,7 @@ let keycloak: Keycloak;
 /**
  * AuthContextValues defines the structure for the default values of the {@link AuthContext}.
  */
-interface AuthContextValues {
+export interface AuthContextValues {
   /**
    * Whether or not a user is currently authenticated
    */
