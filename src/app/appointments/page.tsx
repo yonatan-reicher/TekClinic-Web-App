@@ -296,6 +296,12 @@ const Calendar = (): React.JSX.Element => {
           popupOpen={onPopupOpen}
           created={updateDisplayedDates}
           resourceHeaderTemplate={separateByDoctors && resourceHeaderTemplate}
+          workHours={{
+            start: '08:00',
+            end: '20:00'
+          }}
+          startHour="08:00"
+          endHour="20:00"
         >
           <ResourcesDirective>
             <ResourceDirective
