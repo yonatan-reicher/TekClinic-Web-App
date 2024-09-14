@@ -1,15 +1,16 @@
 import { AppShell, Burger, NavLink } from '@mantine/core'
-import React, { useState } from 'react'
+import React from 'react'
 import { CalendarEvent, Home2 } from 'tabler-icons-react'
 import Link from 'next/link'
 import './NavBar.css'
 import { FaUserDoctor, FaUserGroup } from 'react-icons/fa6'
+import { usePathname } from 'next/navigation'
 
 const Navbar: React.FC<{ opened: boolean, toggle: () => void }> = ({
   opened,
   toggle
 }) => {
-  const [active, setActive] = useState(0)
+  const pathname = usePathname()
 
   const navItems = [
     {
@@ -64,22 +65,23 @@ const Navbar: React.FC<{ opened: boolean, toggle: () => void }> = ({
         title={opened ? 'Close navigation' : 'Open navigation'} // Accessible title for screen readers
       />
 
-      {navItems.map((item, index) => (
+      {navItems.map(({
+        label,
+        href,
+        icon
+      }, index) => (
         <NavLink
-          key={item.label}
-          href={item.href as any}
+          key={index}
+          href={href as any}
           component={Link}
-          label={<div style={{ fontSize: '14px' }}>{item.label}</div>}
+          label={<div style={{ fontSize: '14px' }}>{label}</div>}
           style={{
             margin: '5px',
             marginTop: index === 0 ? '42px' : '5px'
           }} // Extra margin for the first item
-          leftSection={item.icon}
-          active={index === active}
-          className={index === active ? 'nav-link nav-link-active' : 'nav-link'}
-          onClick={() => {
-            setActive(index)
-          }}
+          leftSection={icon}
+          active={pathname === href}
+          className={pathname === href ? 'nav-link nav-link-active' : 'nav-link'}
         />
       ))}
 
