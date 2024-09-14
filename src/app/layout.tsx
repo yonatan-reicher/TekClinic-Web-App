@@ -8,6 +8,7 @@ import 'react-toastify/dist/ReactToastify.css'
 import React from 'react'
 
 import {
+  Anchor,
   AppShell,
   Burger,
   Center,
@@ -139,7 +140,8 @@ function ContentLayout ({ children }: {
                 color: '#888',
                 fontSize: '17px'
               }}>
-                built by team 8
+                built by <Anchor href="https://github.com/TekClinic" target="_blank">students of the Computer Science
+                faculty of the Technion</Anchor>
               </div>
             </Center>
           </AppShell.Footer>
