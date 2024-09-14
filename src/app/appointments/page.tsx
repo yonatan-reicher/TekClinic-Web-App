@@ -12,6 +12,7 @@ import {
   ViewsDirective,
   Week
 } from '@syncfusion/ej2-react-schedule'
+import { RemoveScroll } from 'react-remove-scroll'
 import './styles.css'
 import { useGuaranteeSession } from '@/src/utils/auth'
 import { Appointment } from '@/src/api/model/appointment'
@@ -272,64 +273,67 @@ const Calendar = (): React.JSX.Element => {
             }}
           />
         </Group>
-        <ScheduleComponent
-          currentView="Week" ref={scheduleObj}
-          eventSettings={{
-            dataSource: data,
-            fields: {
-              id: 'id',
-              subject: { name: 'subject' },
-              startTime: { name: 'start_time' },
-              endTime: { name: 'end_time' }
-            }
-          }}
-          group={{ resources: separateByDoctors ? [DOCTORS_RESOURCE] : [] }}
-          allowKeyboardInteraction
-          rowAutoHeight
-          quickInfoOnSelectionEnd
-          timeFormat="HH:mm"
-          actionComplete={onActionComplete}
-          actionBegin={onActionComplete}
-          quickInfoTemplates={{
-            content: quickInfoContent
-          }}
-          popupOpen={onPopupOpen}
-          created={updateDisplayedDates}
-          resourceHeaderTemplate={separateByDoctors && resourceHeaderTemplate}
-          workHours={{
-            start: '08:00',
-            end: '20:00'
-          }}
-          startHour="08:00"
-          endHour="20:00"
-        >
-          <ResourcesDirective>
-            <ResourceDirective
-              field='doctor_id'
-              title='Doctor'
-              name={DOCTORS_RESOURCE}
-              dataSource={separateByDoctors ? paginatedDoctorsResourceData : []}
-              textField='text'
-              idField='id'
-              colorField='color'
-            />
-            <ResourceDirective
-              field='color_id'
-              title='Color'
-              name={COLORS_RESOURCE}
-              dataSource={colorsResourceData}
-              textField='text'
-              idField='id'
-              colorField='color'
-            />
-          </ResourcesDirective>
-          <ViewsDirective>
-            <ViewDirective option="Day"/>
-            <ViewDirective option="Week"/>
-            <ViewDirective option="Month"/>
-          </ViewsDirective>
-          <Inject services={[Day, Week, Month]}/>
-        </ScheduleComponent>
+        <RemoveScroll>
+          <ScheduleComponent
+            height="calc(100vh - 180px)"
+            currentView="Week" ref={scheduleObj}
+            eventSettings={{
+              dataSource: data,
+              fields: {
+                id: 'id',
+                subject: { name: 'subject' },
+                startTime: { name: 'start_time' },
+                endTime: { name: 'end_time' }
+              }
+            }}
+            group={{ resources: separateByDoctors ? [DOCTORS_RESOURCE] : [] }}
+            allowKeyboardInteraction
+            rowAutoHeight
+            quickInfoOnSelectionEnd
+            timeFormat="HH:mm"
+            actionComplete={onActionComplete}
+            actionBegin={onActionComplete}
+            quickInfoTemplates={{
+              content: quickInfoContent
+            }}
+            popupOpen={onPopupOpen}
+            created={updateDisplayedDates}
+            resourceHeaderTemplate={separateByDoctors && resourceHeaderTemplate}
+            workHours={{
+              start: '08:00',
+              end: '20:00'
+            }}
+            startHour="08:00"
+            endHour="20:00"
+          >
+            <ResourcesDirective>
+              <ResourceDirective
+                field='doctor_id'
+                title='Doctor'
+                name={DOCTORS_RESOURCE}
+                dataSource={separateByDoctors ? paginatedDoctorsResourceData : []}
+                textField='text'
+                idField='id'
+                colorField='color'
+              />
+              <ResourceDirective
+                field='color_id'
+                title='Color'
+                name={COLORS_RESOURCE}
+                dataSource={colorsResourceData}
+                textField='text'
+                idField='id'
+                colorField='color'
+              />
+            </ResourcesDirective>
+            <ViewsDirective>
+              <ViewDirective option="Day"/>
+              <ViewDirective option="Week"/>
+              <ViewDirective option="Month"/>
+            </ViewsDirective>
+            <Inject services={[Day, Week, Month]}/>
+          </ScheduleComponent>
+        </RemoveScroll>
       </ModalsProvider>
     </DoctorIdContext.Provider>
   )
