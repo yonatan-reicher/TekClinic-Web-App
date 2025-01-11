@@ -7,7 +7,16 @@ import React, { useEffect, useState } from 'react'
 import { type QueryKey, useQuery, type UseQueryOptions } from '@tanstack/react-query'
 import { useGuaranteeSession } from '@/src/utils/auth'
 import { ModalsProvider } from '@mantine/modals'
-import { ActionIcon, Box, Button, Group, type MantineColorScheme, Tooltip, useComputedColorScheme } from '@mantine/core'
+import {
+  ActionIcon,
+  Box,
+  Button,
+  Group,
+  TextInput,
+  Tooltip,
+  type MantineColorScheme,
+  useComputedColorScheme
+} from '@mantine/core'
 import {
   IconArrowAutofitWidth,
   IconColumnRemove,
@@ -20,7 +29,39 @@ import { handleUIError } from '@/src/utils/error'
 import { useContextMenu } from 'mantine-contextmenu'
 import { type Session } from 'next-auth'
 import { type PaginationResult } from '@/src/api/common'
-import { Eye } from 'tabler-icons-react'
+import { Eye, Search } from 'tabler-icons-react'
+
+/**
+ * Get text content from a React element.
+ *
+ * This does not add whitespace for readability: `<p>Hello <em>world</em>!</p>`
+ * yields `Hello world!` as expected, but `<p>Hello</p><p>world</p>` returns
+ * `Helloworld`, just like https://mdn.io/Node/textContent does.
+ */
+function textContent (elem: React.ReactNode): string {
+  // type ReactNode = string | number | bigint | boolean
+  //                | React.ReactElement<any, string | React.JSXElementConstructor<any>>
+  //                | Iterable<React.ReactNode>
+  //                | React.ReactPortal | Promise<...> | null | undefined
+  if (elem === null || elem === undefined) {
+    return ''
+  }
+  if (typeof elem === 'string' ||
+      typeof elem === 'number' ||
+      typeof elem === 'bigint' ||
+      typeof elem === 'boolean') {
+    return elem.toString()
+  }
+  if (elem instanceof Promise) {
+    throw new Error('textContent does not support promises')
+  }
+  if ('props' in elem) {
+    return textContent(elem.props.children as React.ReactNode)
+  }
+  // elem is `Iterable<React.ReactNode>`
+  const array = Array.from(elem)
+  return array.map(textContent).join('')
+}
 
 const defaultPageSize = 5
 const pageSizeOptions = [2, 5, 10, 20, 50]
@@ -100,6 +141,7 @@ const CustomTable = <DataType, TData extends PaginationResult<DataType> = Pagina
 }: CustomTableProps<DataType, TData, TQueryKey>): React.ReactElement<CustomTableProps<DataType, TData, TQueryKey>> => {
   const [page, setPage] = useState(1)
   const [pageSize, setPageSize] = useState(defaultPageSize)
+  const [searchText, setSearchText] = useState('') // Should be always lowercase
   const session = useGuaranteeSession()
   const computedColorScheme = useComputedColorScheme()
   const { showContextMenu } = useContextMenu()
@@ -210,15 +252,34 @@ const CustomTable = <DataType, TData extends PaginationResult<DataType> = Pagina
       : columns
   })
 
+  const dataToShow = data?.items.filter(item => {
+    return columns.some(column => {
+      // Check if the rendered content of the column includes the search text
+      const renderedText =
+        column.render != null
+          ? textContent(column.render(item, 0))
+          : (item as any)[column.accessor] !== undefined
+              ? (item as any)[column.accessor].toString()
+              : ''
+      return renderedText.toLowerCase().includes(searchText)
+    })
+  })
+
   return (
     <ModalsProvider>
       <Box>
-        {showCreateModal != null && (
-          <Box style={{
+        <Box
+          style={{
             display: 'flex',
-            justifyContent: 'flex-end',
             marginBottom: '10px'
-          }}>
+          }}
+        >
+          <TextInput
+            leftSection={<Search size={16} strokeWidth={3}/>}
+            placeholder="Search"
+            onChange={(event) => { setSearchText(event.currentTarget.value.toLowerCase()) }}
+          />
+          {showCreateModal != null && (
             <Button
               onClick={() => {
                 showCreateModal({
@@ -230,12 +291,12 @@ const CustomTable = <DataType, TData extends PaginationResult<DataType> = Pagina
                 })
               }}
               size="sm"
-              m="la"
+              ml="auto"
             >
               Add {dataName}
             </Button>
-          </Box>
-        )}
+          )}
+        </Box>
         <DataTable
           striped
           highlightOnHover
@@ -245,7 +306,7 @@ const CustomTable = <DataType, TData extends PaginationResult<DataType> = Pagina
           minHeight={180}
           columns={effectiveColumns}
           fetching={isLoading}
-          records={data?.items}
+          records={dataToShow}
           page={page}
           onPageChange={setPage}
           totalRecords={data?.count}
