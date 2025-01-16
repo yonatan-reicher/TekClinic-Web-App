@@ -25,11 +25,14 @@ export class Task {
   static __name__ = 'tasks'
 
   readonly id: number
+  /** 3. Created At (should not be selectable, the web-app only reads it. Chosen by the server) */
   readonly created_at: Date
   complete: boolean
   patient_id: number
+  /** 4. Expertise - which kind of doctor does this patient need? eye/pregnancy/whatever... select one or leave empty */
   expertise: string | null
   title: string
+  /** 7. Description (could be left empty) */
   description: string
 
   constructor (scheme: TaskScheme) {
