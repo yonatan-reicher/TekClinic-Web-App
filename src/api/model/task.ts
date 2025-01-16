@@ -6,6 +6,7 @@ import {
 } from '@/src/api/scheme'
 import {
   createAPIResource,
+  deleteAPIResource,
   formatPaginationParams,
   getAPIResource,
   getAPIResourceList,
@@ -69,5 +70,13 @@ export class Task {
       description: this.description
     }
     await putAPIResource<IdHolder, TaskUpdateScheme>(Task, this.id, data, session)
+  }
+
+  deleteById = async (session: Session): Promise<void> => {
+    await deleteAPIResource(Task, this.id, session)
+  }
+
+  delete = async (session: Session): Promise<void> => {
+    await this.deleteById(session)
   }
 }
