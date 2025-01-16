@@ -1,37 +1,49 @@
 'use client'
 
-import React, { useState } from 'react'
+import React from 'react'
 import { modals } from '@mantine/modals'
-import CustomTable from '@/src/components/CustomTable'
+import CustomTable, { type CreateModalProps } from '@/src/components/CustomTable'
 import CreateTaskForm from './CreateTaskForm'
 import EditTaskForm from './EditTaskForm'
 import ViewTask from './ViewTask'
 import { buildDeleteModal } from '@/src/utils/modals'
-import { createTaskInMemory, type TaskInMemory } from './createTaskInMemory'
+import { Task } from '@/src/api/model/task'
 
 export default function TasksPage (): JSX.Element {
-  const [tasks, setTasks] = useState<TaskInMemory[]>([])
-  const [nextId, setNextId] = useState(1)
-
   // "Add Task"
   function handleShowCreateModal ({
     session,
-    computedColorScheme,
+    // computedColorScheme,
     onSuccess
-  }: any): void {
+  }: CreateModalProps): void {
     const modalId = 'create-task-modal'
     modals.open({
       modalId,
       title: 'Add Task',
       children: (
         <CreateTaskForm
+          // TODO: Rename this to be onSuccess to be more consistent with other
+          // CreatePatientForm.tsx and friends, and make this async!
+          // Look at CreatePatientForm.tsx for an example, with the use of a
+          // toast for pretty feedback.
           onFinish={(formData) => {
-            const newTask = createTaskInMemory(nextId, formData.name, formData.doctor, formData.patient)
-            setTasks(prev => [...prev, newTask])
-            setNextId(prev => prev + 1)
-
-            modals.close(modalId)
-            void onSuccess()
+            // TODO: Move to CreateTaskForm.tsx to be more consistent with
+            // CreatePatientForm.tsx and friends
+            Task.create(
+              {
+                title: formData.name,
+                description: '', // formData.description,
+                patient_id: 1, // TODO: Add Patient.getByName and call it here
+                expertise: '' // formData.expertise
+              },
+              session
+            )
+              .then(() => { modals.close(modalId) })
+              .then(onSuccess)
+              .catch((error) => {
+                // TODO: we should show this on the screen with a toast instead!
+                console.error('Error creating task:', error)
+              })
           }}
         />
       )
@@ -84,48 +96,23 @@ export default function TasksPage (): JSX.Element {
     })
   }
 
-  const handleShowDeleteModal = buildDeleteModal<TaskInMemory>(
-    'task',
-    (task) => task.name
-  )
-
-  function handleDeleteModal ({
-    item,
-    session,
-    computedColorScheme,
-    onSuccess
-  }: {
-    item: TaskInMemory
-    session: any
-    computedColorScheme: any
-    onSuccess: () => Promise<void>
-  }): void {
-    handleShowDeleteModal({
-      item,
-      session,
-      computedColorScheme,
-      onSuccess: async () => {
-        setTasks(prev => prev.filter(t => t.id !== item.id))
-        await onSuccess()
-      }
-    })
-  }
-
   return (
-    <CustomTable<TaskInMemory>
+    <CustomTable<Task>
       dataName="Task"
       storeColumnKey="task-columns"
       queryOptions={(session, page, pageSize) => ({
-        queryKey: ['tasks', tasks, page, pageSize],
-        queryFn: async () => ({
-          items: tasks,
-          count: tasks.length
-        })
+        queryKey: ['tasks', page, pageSize],
+        queryFn: async () => {
+          return await Task.get({
+            skip: pageSize * (page - 1),
+            limit: pageSize
+          }, session)
+        }
       })}
       showCreateModal={handleShowCreateModal}
       showEditModal={handleShowEditModal}
       showViewModal={handleShowViewModal}
-      showDeleteModal={handleDeleteModal}
+      showDeleteModal={buildDeleteModal('task', (task) => task.title)}
       columns={[
         { title: '#', accessor: 'id' },
         { title: 'Name', accessor: 'name' },
