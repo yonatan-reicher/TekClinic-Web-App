@@ -1,6 +1,3 @@
-// src/app/tasks/CreateTaskForm.tsx
-'use client'
-
 import React, { useState } from 'react'
 import { Button, TextInput } from '@mantine/core'
 
