@@ -3,6 +3,7 @@
 
 import { registerLicense } from '@syncfusion/ej2-base';
 registerLicense('Ngo9BigBOggjHTQxAR8/V1NMaF5cWWJCfEx0Qnxbf1x1ZFRGal9STnVWUiweQnxTdEBjWH1WcXRQQGBYU0x/Xg==');
+
 import React, { useState, useMemo } from 'react'
 import { modals } from '@mantine/modals'
 import CustomTable from '@/src/components/CustomTable'
@@ -12,9 +13,13 @@ import ViewTask from './ViewTask'
 import { buildDeleteModal } from '@/src/utils/modals'
 import { createTaskInMemory, type TaskInMemory } from './createTaskInMemory'
 
-// 1) Kanban imports
-import '@syncfusion/ej2-base/styles/material.css'
-import '@syncfusion/ej2-react-kanban/styles/material.css'
+// 1) Kanban imports, using BOOTSTRAP5 theme instead of "material"
+import '@syncfusion/ej2-base/styles/bootstrap5.css'
+import '@syncfusion/ej2-buttons/styles/bootstrap5.css'
+import '@syncfusion/ej2-popups/styles/bootstrap5.css'
+import '@syncfusion/ej2-inputs/styles/bootstrap5.css'
+import '@syncfusion/ej2-react-kanban/styles/bootstrap5.css'
+
 import {
   KanbanComponent,
   ColumnsDirective,
@@ -24,9 +29,6 @@ import {
 
 import { Button, Radio, Group } from '@mantine/core'
 
-// -------------------------------------------------------------
-// MAIN COMPONENT
-// -------------------------------------------------------------
 export default function TasksPage (): JSX.Element {
   const [tasks, setTasks] = useState<TaskInMemory[]>([])
   const [nextId, setNextId] = useState(1)
@@ -152,12 +154,10 @@ export default function TasksPage (): JSX.Element {
   // -------------------------------------------------------------
   // KANBAN LOGIC
   // -------------------------------------------------------------
-
-  // Gather unique "doctor" or "patient" values
   const uniqueGroups = useMemo(() => {
     const setOfGroups = new Set<string>()
     tasks.forEach((t) => {
-      const fieldValue = t[sortBy] // either t.doctor or t.patient
+      const fieldValue = t[sortBy]
       if (fieldValue) {
         setOfGroups.add(fieldValue)
       }
@@ -165,7 +165,6 @@ export default function TasksPage (): JSX.Element {
     return Array.from(setOfGroups)
   }, [tasks, sortBy])
 
-  // Build columns for each unique "doctor" or "patient"
   const kanbanColumns = useMemo(
     () =>
       uniqueGroups.map((groupValue) => ({
@@ -175,10 +174,9 @@ export default function TasksPage (): JSX.Element {
     [uniqueGroups]
   )
 
-  // Configure how each Kanban card is displayed
   const cardSettings: CardSettingsModel = {
     headerField: 'name',
-    contentField: 'doctor' // what content to show inside the card
+    contentField: 'doctor'
   }
 
   // -------------------------------------------------------------
@@ -188,7 +186,6 @@ export default function TasksPage (): JSX.Element {
     <div>
       <h1>Tasks</h1>
 
-      {/* 4) Toggle Button & Radio Group */}
       <div style={{ marginBottom: 16 }}>
         <Button
           onClick={() =>
@@ -198,25 +195,25 @@ export default function TasksPage (): JSX.Element {
           Switch to {viewMode === 'table' ? 'Kanban' : 'Table'}
         </Button>
 
-        <div style={{ marginTop: 16 }}>
-          <Radio.Group
-            value={sortBy}
-            onChange={(value) => setSortBy(value as 'doctor' | 'patient')}
-            label="Sort by"
-          >
-            <Group mt="xs">
-              <Radio value="doctor" label="Doctor" />
-              <Radio value="patient" label="Patient" />
-            </Group>
-          </Radio.Group>
-        </div>
+        {/* Only display "Sort by" in Kanban mode */}
+        {viewMode === 'kanban' && (
+          <div style={{ marginTop: 16 }}>
+            <Radio.Group
+              value={sortBy}
+              onChange={(value) => setSortBy(value as 'doctor' | 'patient')}
+              label="Sort by"
+            >
+              <Group mt="xs">
+                <Radio value="doctor" label="Doctor" />
+                <Radio value="patient" label="Patient" />
+              </Group>
+            </Radio.Group>
+          </div>
+        )}
       </div>
 
       {viewMode === 'table'
         ? (
-          // -------------------------------------------------------------
-          // TABLE VIEW
-          // -------------------------------------------------------------
           <CustomTable<TaskInMemory>
             dataName="Task"
             storeColumnKey="task-columns"
@@ -240,9 +237,6 @@ export default function TasksPage (): JSX.Element {
           />
           )
         : (
-          // -------------------------------------------------------------
-          // KANBAN VIEW
-          // -------------------------------------------------------------
           <KanbanComponent
             id="kanban"
             keyField={sortBy}
