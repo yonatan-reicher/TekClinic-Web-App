@@ -33,7 +33,7 @@ import {useGuaranteeSession} from '@/src/utils/auth'
 // ----------------------------
 // "Add Task" Modal
 // ----------------------------
-function handleShowCreateModal ({
+function showCreateModal ({
                                   session,
                                   // computedColorScheme,
                                   onSuccess
@@ -75,7 +75,7 @@ function handleShowCreateModal ({
 // ----------------------------
 // "Edit Task" Modal
 // ----------------------------
-function handleShowEditModal ({
+function showEditModal ({
                                 item,
                                 session,
                                 computedColorScheme,
@@ -102,7 +102,7 @@ function handleShowEditModal ({
 // ----------------------------
 // "View Task" Modal
 // ----------------------------
-function handleShowViewModal ({
+function showViewModal ({
                                 item,
                                 session,
                                 computedColorScheme,
@@ -130,7 +130,7 @@ const handleShowDeleteModal = buildDeleteModal<Task>(
     (task) => task.title
 )
 
-function handleDeleteModal ({
+function showDeleteModal ({
                               item,
                               session,
                               computedColorScheme,
@@ -263,10 +263,10 @@ export default function TasksPage (): JSX.Element {
                         }, session)
                       }
                     })}
-                    showCreateModal={handleShowCreateModal}
-                    showEditModal={handleShowEditModal}
-                    showViewModal={handleShowViewModal}
-                    showDeleteModal={handleDeleteModal}
+                    showCreateModal={showCreateModal}
+                    showEditModal={showEditModal}
+                    showViewModal={showViewModal}
+                    showDeleteModal={showDeleteModal}
                     columns={[
                       { title: '#', accessor: 'id' },
                       { title: 'Name', accessor: 'name' },
