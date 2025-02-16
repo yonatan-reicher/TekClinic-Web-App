@@ -155,7 +155,12 @@ function handleDeleteModal ({
 // -------------------------------------------------------------
 // KANBAN LOGIC
 // -------------------------------------------------------------
-async function uniqueGroups(session: Session){
+
+/** Task fields that we can sort by */
+type SortBy = 'patient_id' | 'expertise'
+
+/** This function returns a set of values based on the `sortBy` field, as an array */
+async function uniqueGroups(session: Session, sortBy: SortBy): Promise<any[]> {
   const setOfGroups = new Set<string | number>()
   const tasks = await Task.get({}, session)
   tasks.items.forEach((t) => {
@@ -164,12 +169,18 @@ async function uniqueGroups(session: Session){
       setOfGroups.add(fieldValue)
     }
   })
+  // TODO: Change return type to a set
   return Array.from(setOfGroups)
 }
 
-async function kanbanColumns (session: Session){
-  const groups = await uniqueGroups(session)
-  return groups.map((groupValue, session) => ({
+type KanbanColumn = {
+  headerText: string | number
+  keyField: string | number
+}
+
+async function kanbanColumns (session: Session, sortBy: SortBy): Promise<KanbanColumn[]> {
+  const groups = await uniqueGroups(session, sortBy)
+  return groups.map(groupValue => ({
     headerText: groupValue,
     keyField: groupValue
   }))
@@ -180,18 +191,24 @@ const cardSettings: CardSettingsModel = {
   contentField: 'doctor'
 }
 
-
 export default function TasksPage (): JSX.Element {
   // 2) "viewMode" toggles between "table" and "kanban"
   const [viewMode, setViewMode] = useState<'table' | 'kanban'>('table')
 
-  // 3) "sortBy" chooses whether Kanban columns are by "doctor" or "patient"
-  const [sortBy, setSortBy] = useState<'patient_id' | 'expertise'>('patient_id')
+  // 3) "sortBy" chooses whether Kanban columns are by "doctor" or "expertise"
+  const [sortBy, setSortBy] = useState<SortBy>('patient_id')
   const [tasks, setTasks] = useState<Task[]>()
+
+  // TODO: Replace console.error calls with a toasttttt
+  
+  // TODO: This shouldn't be here. It should be in a useEffect hook.
   Task.get({}, useGuaranteeSession()).then((t)=> {setTasks(t.items)}).catch(console.error)
 
   const [columns, setColumns] = useState<{headerText: string | number, keyField: string | number }[]>()
-  kanbanColumns(useGuaranteeSession()).then((columnsData) => {setColumns(columnsData)}).catch(console.error)
+  // TODO: This shouldn't be here too!! It should be in a useEffect hook.
+  kanbanColumns(useGuaranteeSession(), sortBy)
+    .then((columnsData) => {setColumns(columnsData)})
+    .catch(console.error)
 
   // -------------------------------------------------------------
   // RENDER
