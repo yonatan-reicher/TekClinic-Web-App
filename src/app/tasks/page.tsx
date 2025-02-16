@@ -30,163 +30,163 @@ import { Button, Radio, Group } from '@mantine/core'
 import {Session} from "next-auth";
 import {useGuaranteeSession} from '@/src/utils/auth'
 
+// ----------------------------
+// "Add Task" Modal
+// ----------------------------
+function handleShowCreateModal ({
+                                  session,
+                                  // computedColorScheme,
+                                  onSuccess
+                                }: CreateModalProps): void {
+  const modalId = 'create-task-modal'
+  modals.open({
+    modalId,
+    title: 'Add Task',
+    children: (
+        <CreateTaskForm
+            // TODO: Rename this to be onSuccess to be more consistent with other
+            // CreatePatientForm.tsx and friends, and make this async!
+            // Look at CreatePatientForm.tsx for an example, with the use of a
+            // toast for pretty feedback.
+            onFinish={(formData) => {
+              // TODO: Move to CreateTaskForm.tsx to be more consistent with
+              // CreatePatientForm.tsx and friends
+              Task.create(
+                  {
+                    title: formData.name,
+                    description: '', // formData.description,
+                    patient_id: 1, // TODO: Add Patient.getByName and call it here
+                    expertise: '' // formData.expertise
+                  },
+                  session
+              )
+                  .then(() => { modals.close(modalId) })
+                  .then(onSuccess)
+                  .catch((error) => {
+                    // TODO: we should show this on the screen with a toast instead!
+                    console.error('Error creating task:', error)
+                  })
+            }}
+        />
+    )
+  })
+}
+
+// ----------------------------
+// "Edit Task" Modal
+// ----------------------------
+function handleShowEditModal ({
+                                item,
+                                session,
+                                computedColorScheme,
+                                onSuccess
+                              }: any): void {
+  const modalId = 'edit-task-modal'
+  modals.open({
+    modalId,
+    title: 'Edit Task',
+    children: (
+        <EditTaskForm
+            item={item}
+            session={session}
+            computedColorScheme={computedColorScheme}
+            onSuccess={async () => {
+              modals.close(modalId)
+              await onSuccess()
+            }}
+        />
+    )
+  })
+}
+
+// ----------------------------
+// "View Task" Modal
+// ----------------------------
+function handleShowViewModal ({
+                                item,
+                                session,
+                                computedColorScheme,
+                                onSuccess
+                              }: any): void {
+  const modalId = 'view-task-modal'
+  modals.open({
+    modalId,
+    title: 'Task Information',
+    children: (
+        <ViewTask
+            task={item}
+            session={session}
+            computedColorScheme={computedColorScheme}
+        />
+    )
+  })
+}
+
+// ----------------------------
+// "Delete Task" Modal
+// ----------------------------
+const handleShowDeleteModal = buildDeleteModal<Task>(
+    'task',
+    (task) => task.title
+)
+
+function handleDeleteModal ({
+                              item,
+                              session,
+                              computedColorScheme,
+                              onSuccess
+                            }: {
+  item: Task
+  session: any
+  computedColorScheme: any
+  onSuccess: () => Promise<void>
+}): void {
+  handleShowDeleteModal({
+    item,
+    session,
+    computedColorScheme,
+    onSuccess: async () => {
+      await item.delete(session)
+      await onSuccess()
+    }
+  })
+}
+
+// -------------------------------------------------------------
+// KANBAN LOGIC
+// -------------------------------------------------------------
+async function uniqueGroups(session: Session){
+  const setOfGroups = new Set<string | number>()
+  const tasks = await Task.get({}, session)
+  tasks.items.forEach((t) => {
+    const fieldValue = t[sortBy]
+    if (fieldValue) {
+      setOfGroups.add(fieldValue)
+    }
+  })
+  return Array.from(setOfGroups)
+}
+
+async function kanbanColumns (session: Session){
+  const groups = await uniqueGroups(session)
+  return groups.map((groupValue, session) => ({
+    headerText: groupValue,
+    keyField: groupValue
+  }))
+}
+
+const cardSettings: CardSettingsModel = {
+  headerField: 'name',
+  contentField: 'doctor'
+}
+
+
 export default function TasksPage (): JSX.Element {
   // 2) "viewMode" toggles between "table" and "kanban"
   const [viewMode, setViewMode] = useState<'table' | 'kanban'>('table')
 
   // 3) "sortBy" chooses whether Kanban columns are by "doctor" or "patient"
   const [sortBy, setSortBy] = useState<'patient_id' | 'expertise'>('patient_id')
-
-  // ----------------------------
-  // "Add Task" Modal
-  // ----------------------------
-  function handleShowCreateModal ({
-                                    session,
-                                    // computedColorScheme,
-                                    onSuccess
-                                  }: CreateModalProps): void {
-    const modalId = 'create-task-modal'
-    modals.open({
-      modalId,
-      title: 'Add Task',
-      children: (
-          <CreateTaskForm
-              // TODO: Rename this to be onSuccess to be more consistent with other
-              // CreatePatientForm.tsx and friends, and make this async!
-              // Look at CreatePatientForm.tsx for an example, with the use of a
-              // toast for pretty feedback.
-              onFinish={(formData) => {
-                // TODO: Move to CreateTaskForm.tsx to be more consistent with
-                // CreatePatientForm.tsx and friends
-                Task.create(
-                    {
-                      title: formData.name,
-                      description: '', // formData.description,
-                      patient_id: 1, // TODO: Add Patient.getByName and call it here
-                      expertise: '' // formData.expertise
-                    },
-                    session
-                )
-                    .then(() => { modals.close(modalId) })
-                    .then(onSuccess)
-                    .catch((error) => {
-                      // TODO: we should show this on the screen with a toast instead!
-                      console.error('Error creating task:', error)
-                    })
-              }}
-          />
-      )
-    })
-  }
-
-  // ----------------------------
-  // "Edit Task" Modal
-  // ----------------------------
-  function handleShowEditModal ({
-                                  item,
-                                  session,
-                                  computedColorScheme,
-                                  onSuccess
-                                }: any): void {
-    const modalId = 'edit-task-modal'
-    modals.open({
-      modalId,
-      title: 'Edit Task',
-      children: (
-          <EditTaskForm
-              item={item}
-              session={session}
-              computedColorScheme={computedColorScheme}
-              onSuccess={async () => {
-                modals.close(modalId)
-                await onSuccess()
-              }}
-          />
-      )
-    })
-  }
-
-  // ----------------------------
-  // "View Task" Modal
-  // ----------------------------
-  function handleShowViewModal ({
-                                  item,
-                                  session,
-                                  computedColorScheme,
-                                  onSuccess
-                                }: any): void {
-    const modalId = 'view-task-modal'
-    modals.open({
-      modalId,
-      title: 'Task Information',
-      children: (
-          <ViewTask
-              task={item}
-              session={session}
-              computedColorScheme={computedColorScheme}
-          />
-      )
-    })
-  }
-
-  // ----------------------------
-  // "Delete Task" Modal
-  // ----------------------------
-  const handleShowDeleteModal = buildDeleteModal<Task>(
-      'task',
-      (task) => task.title
-  )
-
-  function handleDeleteModal ({
-                                item,
-                                session,
-                                computedColorScheme,
-                                onSuccess
-                              }: {
-    item: Task
-    session: any
-    computedColorScheme: any
-    onSuccess: () => Promise<void>
-  }): void {
-    handleShowDeleteModal({
-      item,
-      session,
-      computedColorScheme,
-      onSuccess: async () => {
-        await item.delete(session)
-        await onSuccess()
-      }
-    })
-  }
-
-  // -------------------------------------------------------------
-  // KANBAN LOGIC
-  // -------------------------------------------------------------
-  async function uniqueGroups(session: Session){
-    const setOfGroups = new Set<string | number>()
-    const tasks = await Task.get({}, session)
-    tasks.items.forEach((t) => {
-      const fieldValue = t[sortBy]
-      if (fieldValue) {
-        setOfGroups.add(fieldValue)
-      }
-    })
-    return Array.from(setOfGroups)
-  }
-
-  async function kanbanColumns (session: Session){
-    const groups = await uniqueGroups(session)
-    return groups.map((groupValue, session) => ({
-      headerText: groupValue,
-      keyField: groupValue
-    }))
-  }
-
-  const cardSettings: CardSettingsModel = {
-    headerField: 'name',
-    contentField: 'doctor'
-  }
-
   const [tasks, setTasks] = useState<Task[]>()
   Task.get({}, useGuaranteeSession()).then((t)=> {setTasks(t.items)}).catch(console.error)
 
