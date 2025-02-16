@@ -3,7 +3,7 @@
 import { registerLicense } from '@syncfusion/ej2-base';
 registerLicense('Ngo9BigBOggjHTQxAR8/V1NMaF5cWWJCfEx0Qnxbf1x1ZFRGal9STnVWUiweQnxTdEBjWH1WcXRQQGBYU0x/Xg==');
 
-import React, { useState, useMemo } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import { modals } from '@mantine/modals'
 import CustomTable, { type CreateModalProps } from '@/src/components/CustomTable'
 import CreateTaskForm from './CreateTaskForm'
@@ -192,23 +192,29 @@ const cardSettings: CardSettingsModel = {
 }
 
 export default function TasksPage (): JSX.Element {
-  // 2) "viewMode" toggles between "table" and "kanban"
+  const session = useGuaranteeSession()
+
+  // `viewMode` toggles between "table" and "kanban"
   const [viewMode, setViewMode] = useState<'table' | 'kanban'>('table')
 
-  // 3) "sortBy" chooses whether Kanban columns are by "doctor" or "expertise"
+  // `sortBy` chooses whether Kanban columns are by "doctor" or "expertise"
   const [sortBy, setSortBy] = useState<SortBy>('patient_id')
-  const [tasks, setTasks] = useState<Task[]>()
 
   // TODO: Replace console.error calls with a toasttttt
   
-  // TODO: This shouldn't be here. It should be in a useEffect hook.
-  Task.get({}, useGuaranteeSession()).then((t)=> {setTasks(t.items)}).catch(console.error)
+  const [tasks, setTasks] = useState<Task[]>()
+  useEffect(() => {
+    Task.get({}, session)
+      .then(({ items }) => { setTasks(items) })
+      .catch(console.error)
+  }, [session])
 
   const [columns, setColumns] = useState<{headerText: string | number, keyField: string | number }[]>()
-  // TODO: This shouldn't be here too!! It should be in a useEffect hook.
-  kanbanColumns(useGuaranteeSession(), sortBy)
-    .then((columnsData) => {setColumns(columnsData)})
-    .catch(console.error)
+  useEffect(() => {
+    kanbanColumns(session, sortBy)
+      .then((columnsData) => {setColumns(columnsData)})
+      .catch(console.error)
+  }, [session, sortBy]);
 
   // -------------------------------------------------------------
   // RENDER
