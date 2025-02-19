@@ -29,46 +29,23 @@ import {
 import { Button, Radio, Group } from '@mantine/core'
 import {Session} from "next-auth";
 import {useGuaranteeSession} from '@/src/utils/auth'
+import dayjs from 'dayjs';
 
 // ----------------------------
 // "Add Task" Modal
 // ----------------------------
-function showCreateModal ({
-                                  session,
-                                  // computedColorScheme,
-                                  onSuccess
-                                }: CreateModalProps): void {
+function showCreateModal (props: CreateModalProps): void {
   const modalId = 'create-task-modal'
   modals.open({
     modalId,
     title: 'Add Task',
-    children: (
-        <CreateTaskForm
-            // TODO: Rename this to be onSuccess to be more consistent with other
-            // CreatePatientForm.tsx and friends, and make this async!
-            // Look at CreatePatientForm.tsx for an example, with the use of a
-            // toast for pretty feedback.
-            onFinish={(formData) => {
-              // TODO: Move to CreateTaskForm.tsx to be more consistent with
-              // CreatePatientForm.tsx and friends
-              Task.create(
-                  {
-                    title: formData.name,
-                    description: '', // formData.description,
-                    patient_id: 1, // TODO: Add Patient.getByName and call it here
-                    expertise: '' // formData.expertise
-                  },
-                  session
-              )
-                  .then(() => { modals.close(modalId) })
-                  .then(onSuccess)
-                  .catch((error) => {
-                    // TODO: we should show this on the screen with a toast instead!
-                    console.error('Error creating task:', error)
-                  })
-            }}
-        />
-    )
+    children: <CreateTaskForm {...props} />
+    // TODO: Rename this to be onSuccess to be more consistent with other
+    // CreatePatientForm.tsx and friends, and make this async!
+    // Look at CreatePatientForm.tsx for an example, with the use of a
+    // toast for pretty feedback.
+    // UPDATE: Did this for this modal, should do this for the other
+    // two modals
   })
 }
 
@@ -268,10 +245,13 @@ export default function TasksPage (): JSX.Element {
                     showViewModal={showViewModal}
                     showDeleteModal={showDeleteModal}
                     columns={[
-                      { title: '#', accessor: 'id' },
-                      { title: 'Name', accessor: 'name' },
-                      { title: 'Doctor', accessor: 'doctor' },
-                      { title: 'Patient', accessor: 'patient' }
+                      { title: '#', accessor: 'id', toggleable: false, draggable: false, resizable: false },
+                      { accessor: 'title' },
+                      { accessor: 'complete' },
+                      { accessor: 'patient_id' },
+                      { accessor: 'expertise' },
+                      { accessor: 'description' },
+                      { accessor: 'created_at', render: task => dayjs(task.created_at).format('YYYY-MM-DD') },
                     ]}
                 />
             )
