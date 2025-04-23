@@ -7,6 +7,7 @@ import female_avatar from '@/public/female-patient.webp'
 import unknown_avatar from '@/public/unknown-patient.webp'
 import { Appointment } from '@/src/api/model/appointment'
 import PhoneNumber from '@/src/components/PhoneNumber'
+import Languages from '@/src/components/Languages'
 
 async function loadPatientAppointments (patientId: number, session: Session): Promise<Appointment[]> {
   const { items: appointments } = await Appointment.get({
@@ -119,16 +120,7 @@ const ViewPatient: React.FC<ViewPatientProps> =
 
           <Text><strong>Languages:</strong></Text>
 
-          {patient.languages.map((language) => (
-              <Badge key={language} variant="gradient" gradient={{
-                from: (computedColorScheme === 'light' ? '#e3e3e3' : '#3d3c3c'),
-                to: (computedColorScheme === 'light' ? '#e3e3e3' : '#3d3c3c'),
-                deg: 90
-              }} style={{ color: computedColorScheme === 'light' ? 'black' : 'white' }}>
-                {language}
-              </Badge>
-          )
-          )}
+          <Languages languages={patient.languages} />
 
           {patient.referred_by !== null && <Text><strong>Referred By:</strong> {patient.referred_by}</Text>}
           {patient.special_note !== null &&
