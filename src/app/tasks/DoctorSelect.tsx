@@ -1,3 +1,5 @@
+// This file is work that for some reason we did not need again but might need
+// later.
 /***
 'use client'
 
