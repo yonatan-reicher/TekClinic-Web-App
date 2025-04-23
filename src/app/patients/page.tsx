@@ -6,6 +6,7 @@ import { Patient } from '@/src/api/model/patient'
 import { Badge, Flex, useComputedColorScheme } from '@mantine/core'
 import CustomTable from '@/src/components/CustomTable'
 import PhoneNumber from '@/src/components/PhoneNumber'
+import Languages from '@/src/components/Languages'
 import { buildDeleteModal } from '@/src/utils/modals'
 import { modals } from '@mantine/modals'
 import CreatePatientForm from './CreatePatientForm'
@@ -139,20 +140,7 @@ function PatientsPage (): React.JSX.Element {
         {
           accessor: 'languages',
           render:
-            (patient: Patient) => (
-              <Flex style={{ margin: '2px' }} direction='column' gap='10px'>
-                {patient.languages.map((language) => (
-                    <Badge key={language} variant="gradient" gradient={{
-                      from: (computedColorScheme === 'light' ? '#e3e3e3' : '#3d3c3c'),
-                      to: (computedColorScheme === 'light' ? '#e3e3e3' : '#3d3c3c'),
-                      deg: 90
-                    }} style={{ color: computedColorScheme === 'light' ? 'black' : 'white' }}>
-                      {language}
-                    </Badge>
-                )
-                )}
-              </Flex>
-            )
+            (patient: Patient) => <Languages languages={patient.languages} />
         },
         {
           accessor: 'birth_date',
