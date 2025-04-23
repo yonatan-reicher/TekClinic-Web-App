@@ -1,8 +1,5 @@
 'use client'
 
-import { registerLicense } from '@syncfusion/ej2-base';
-registerLicense('Ngo9BigBOggjHTQxAR8/V1NMaF5cWWJCfEx0Qnxbf1x1ZFRGal9STnVWUiweQnxTdEBjWH1WcXRQQGBYU0x/Xg==');
-
 import React, { useState, useEffect, useMemo } from 'react'
 import { modals } from '@mantine/modals'
 import CustomTable, { type CreateModalProps } from '@/src/components/CustomTable'
