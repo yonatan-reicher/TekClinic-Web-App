@@ -3,7 +3,7 @@ import React from 'react'
 import { CalendarEvent, Home2 } from 'tabler-icons-react'
 import Link from 'next/link'
 import './NavBar.css'
-import { FaUserDoctor, FaUserGroup } from 'react-icons/fa6'
+import { FaStethoscope, FaRegUser, FaListCheck } from 'react-icons/fa6'
 import { usePathname } from 'next/navigation'
 
 const Navbar: React.FC<{ opened: boolean, toggle: () => void }> = ({
@@ -21,12 +21,12 @@ const Navbar: React.FC<{ opened: boolean, toggle: () => void }> = ({
     {
       href: '/patients',
       label: 'Patients',
-      icon: <FaUserGroup size="20px"/>
+      icon: <FaRegUser size="20px"/>
     },
     {
       href: '/doctors',
       label: 'Doctors',
-      icon: <FaUserDoctor size="20px"/>
+      icon: <FaStethoscope size="20px"/>
     },
     {
       href: '/appointments',
@@ -37,7 +37,7 @@ const Navbar: React.FC<{ opened: boolean, toggle: () => void }> = ({
       href: '/tasks',
       label: 'Tasks',
       // TODO: Change this icon!
-      icon: <CalendarEvent size="20px"/>
+      icon: <FaListCheck size="20px"/>
     }
   ]
 
