@@ -36,7 +36,6 @@ const Navbar: React.FC<{ opened: boolean, toggle: () => void }> = ({
     {
       href: '/tasks',
       label: 'Tasks',
-      // TODO: Change this icon!
       icon: <FaListCheck size="20px" style={{
         transform: "scale(0.8)" // This icon is slightly larger than the rest
       }}/>
