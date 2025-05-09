@@ -4,6 +4,7 @@ import { CalendarEvent, Home2 } from 'tabler-icons-react'
 import Link from 'next/link'
 import './NavBar.css'
 import { FaStethoscope, FaRegUser, FaListCheck } from 'react-icons/fa6'
+import { LuAlignEndHorizontal } from 'react-icons/lu'
 import { usePathname } from 'next/navigation'
 
 const Navbar: React.FC<{ opened: boolean, toggle: () => void }> = ({
@@ -17,6 +18,11 @@ const Navbar: React.FC<{ opened: boolean, toggle: () => void }> = ({
       href: '/',
       label: 'Home',
       icon: <Home2 size="20px"/>
+    },
+    {
+      href: '/dashboard',
+      label: 'Dashboard',
+      icon: <LuAlignEndHorizontal size="20px"/>
     },
     {
       href: '/patients',
