@@ -44,7 +44,7 @@ function SelectPatient () {
                     query: { patient: "test-patient" }
                 }}>
                     {/* Just for testing */}
-                    <Button fullWidth>Choosen existing patient</Button>
+                    <Button fullWidth>Choose an existing patient</Button>
                 </Link>
             </Column>
         </Group>
