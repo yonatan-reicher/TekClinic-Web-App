@@ -3,8 +3,11 @@
 import React from 'react'
 import Link from 'next/link'
 import {
+    Button,
+    Group,
+    Stack,
     Title,
-    Group, Stack, Button } from '@mantine/core'
+} from '@mantine/core'
 
 
 function Column(props: { name: string, children: React.ReactNode }) {
