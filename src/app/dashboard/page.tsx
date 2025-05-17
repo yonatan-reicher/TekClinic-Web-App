@@ -8,6 +8,7 @@ import {
     Stack,
     Title,
 } from '@mantine/core'
+import { AppointmentSchedule } from '@/src/components/AppointmentSchedule'
 
 
 function Column(props: { name: string, children: React.ReactNode }) {
@@ -26,6 +27,7 @@ function SelectPatient () {
         <Title ta="center">Select a Patient</Title>
         <Group grow align="stretch" justify="flex-start">
             <Column name="With Existing Appointment">
+                <AppointmentSchedule date='today'/>
                 <Link prefetch={true} href={{
                     pathname: "/dashboard/view-patient",
                     query: {
