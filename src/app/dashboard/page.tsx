@@ -11,7 +11,6 @@ import {
     Title,
     useComputedColorScheme,
 } from '@mantine/core'
-import AppointmentForm from '@/src/app/appointments/AppointmentForm'
 import AppointmentSchedule from '@/src/components/AppointmentSchedule'
 import { useGuaranteeSession } from '@/src/utils/auth'
 
@@ -84,15 +83,6 @@ function SelectPatient () {
                 </Link>
             </Column>
         </Group>
-        <AppointmentForm
-            onSuccess={async () => {}}
-            session={session}
-            computedColorScheme={ccs}
-            data={{
-                start_time: new Date(),
-                end_time: dateAddHour(new Date(), 1),
-            }}
-        />
     </Stack>
 }
 
