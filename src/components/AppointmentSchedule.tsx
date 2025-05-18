@@ -13,7 +13,7 @@ import { errorHandler } from '@/src/utils/error';
 
 export default function AppointmentSchedule(
     props: {
-        date: Date | 'today', // This might change
+        date?: Date | 'today', // This might change
         doctor_id?: number,
         patient_id?: number,
         onClick?: (_: Appointment) => Promise<void>,
@@ -41,7 +41,6 @@ export default function AppointmentSchedule(
 
     return (
         <Stack gap="xs">
-            <Title order={4} ta="center">Today's Appointments</Title>
             { appointments === 'loading'
                 ? <Text>Loading...</Text>
                 : <>{...appointments.map(appointment => {
