@@ -85,12 +85,12 @@ function AppointmentLine(
             </If>
             <If cond={!hideDoctor}>
                 <Text c="white" fw="bold" m="auto">
-                    {patientName ?? 'Loading patient...'}
+                    {doctorName ?? 'Loading doctor...'}
                 </Text>
             </If>
             <If cond={!hidePatient}>
                 <Text c="white" fw="bold" m="auto">
-                    {doctorName ?? 'Loading doctor...'}
+                    {patientName ?? 'Loading patient...'}
                 </Text>
             </If>
         </Group>
